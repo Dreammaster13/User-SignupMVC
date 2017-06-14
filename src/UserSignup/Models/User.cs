@@ -11,7 +11,21 @@ namespace UserSignup.Models
         public string Username { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+        public int UserId { get; set; }
+        private DateTime Created; 
         
-        // add a constructor to set the CreateDate when a new user is instantiated        
+        // add a constructor to set the CreateDate when a new user is instantiated      
+        public User(string uname,string email,string pword)
+        {
+            Email = email;
+            Username = uname;
+            Password = pword;
+            Created = DateTime.Now;
+
+        }
+
+        public User() { }
+
+
     }
 }

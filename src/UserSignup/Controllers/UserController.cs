@@ -11,17 +11,25 @@ namespace UserSignup.Controllers
 {
     public class UserController : Controller
     {
-        public IActionResult Index(User user)
+        public IActionResult Index(List<User> users)
         {
-            //TODO 3: update this to get all users from your UserData class
-            // and return it to the view.  Update the view to display some user data.
-            if (user == null) user = new User();
-            return View(user);
+         
+            users = UserData.GetAll();
+            if (users == null)
+            {
+                List<User> theUsers = new List<User>();
+                return View(theUsers);
+            }
+            else
+            {
+                return View(users);
+            }
         }
 
         // TODO 4: add a details controller and view that takes a single userid,
         // gets that user object from UserData, returns it to the details view
         // where it is displayed
+
 
         [HttpGet]
         public IActionResult Add()
@@ -32,15 +40,20 @@ namespace UserSignup.Controllers
         [HttpPost]
         public IActionResult Add(User user, string verify)
         {
-            if (user.Password == verify && !String.IsNullOrEmpty(user.Username))
+
+            bool emailVal = UserData.IsValidEmail(user.Email);
+            bool unameVal = UserData.IsValidUserName(user.Username);
+            if (user.Password == verify && !String.IsNullOrEmpty(user.Password)&&unameVal==true)
             {
-                // return RedirectToAction("Index", user);
-                return RedirectToAction("Index", new { Username = user.Username } );
+                
+                List<User> users = UserData.GetAll();
+                users.Add(user);
+                return RedirectToAction("Index",users);
             }
             else
             {
                 ViewBag.PasswordError = user.Password != verify ? "Your passwords must match" : "";
-                ViewBag.UsernameError = String.IsNullOrEmpty(user.Username) ? "You must enter a username" : "";
+                ViewBag.UsernameError = !unameVal ? "You must enter a valid username (all letters, 5 to 15 characters" : "";
                 return View(user);
             }
         }
